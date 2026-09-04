@@ -2,20 +2,16 @@
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+include = ["agents*", "glyco_mind*"]
+
 [project]
 name = "glycan-mass-spec-annotator"
 version = "2.0.0"
 description = "GlycoMind: N-Glycan & O-Glycan Tandem Mass Spectrometry Fragmenter Engine"
 readme = "README.md"
 authors = [{ name = "Dr. Abu Suraih Sakhri", email = "abusuraih@example.com" }]
-license = { text = "MIT" }
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-    "Topic :: Security/Cryptography",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
-]
+license = "MIT"
 requires-python = ">=3.9"
 dependencies = []
 

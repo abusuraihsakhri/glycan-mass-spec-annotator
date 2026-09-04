@@ -1,7 +1,6 @@
 """
 Prometheus Operational Metrics Exporter for glycan-mass-spec-annotator.
 """
-import time
 from typing import Dict, Any
 
 class SystemMetricsCollector:

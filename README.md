@@ -73,6 +73,20 @@ python cli.py --task-id <value> --target <value> --primary <value> --secondary <
 * **Active Learning Bayesian Calibration:** Dynamic tracker updating worker reliability weights and monitoring Brier calibration drift.
 * **FastAPI & Prometheus Telemetry:** Exposes OpenAPI 3.1 REST endpoints and operational Prometheus metrics (`/metrics`).
 
+### Audit Key Configuration
+
+The application requires a cryptographic audit key to be set via environment variable:
+
+```bash
+# Generate a strong key
+python -c "import secrets; print(secrets.token_hex(32))"
+
+# Set the environment variable
+set AUDIT_SECRET_KEY=your-generated-key-here  # Linux/macOS: export AUDIT_SECRET_KEY=...
+```
+
+**Note:** Without this key set, the application will fail to start. This is intentional to prevent accidental deployment with a default/weak key.
+
 ---
 
 ## 🧪 Testing & Verification
@@ -80,14 +94,25 @@ python cli.py --task-id <value> --target <value> --primary <value> --secondary <
 Run the automated test suite:
 
 ```bash
+# Set a test key (tests do this automatically via conftest.py)
+set AUDIT_SECRET_KEY=test-key-for-development-only
 pytest -v
 ```
 
 Execute high-throughput batch simulation benchmarks:
 
 ```bash
-python simulator.py --tasks 1000 --concurrency 8
+set AUDIT_SECRET_KEY=your-key-here
+python simulator.py 1000
 ```
+
+### Test Coverage
+
+- **PHI Guard Enforcement:** Validates regex patterns block sensitive identifiers
+- **Worker Evaluations:** Tests threshold-based alert generation for each specialized worker
+- **Supervisor Consensus:** Verifies multi-agent consensus and HMAC audit trail integrity
+- **CLI Commands:** Tests audit, chat, and verify-audit subcommands
+- **Enrichment Suite:** Validates domain-specific glycan analysis engines
 
 ---
 
