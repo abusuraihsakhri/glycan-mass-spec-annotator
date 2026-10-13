@@ -53,12 +53,14 @@ function draw(results, candidateCount) {
   $("table-note").textContent = total + results.filter(r => !r.totalMatches).length > shown ?
     "Showing the first 300 rows; download CSV for all peaks and their top 20 candidate matches." : "";
   $("results").hidden = false;
+  $("initial-hint").hidden = true;
   $("download").disabled = false;
 }
 
 $("run").addEventListener("click", () => {
   report("");
   $("results").hidden = true;
+  $("initial-hint").hidden = false;
   $("download").disabled = true;
   currentResults = null;
   try {
