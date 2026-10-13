@@ -45,7 +45,7 @@ python cli.py batch --input sample.csv --output results.csv
 python cli.py serve --host 127.0.0.1 --port 8000
 ```
 
-The FastAPI endpoints include `GET /health`, `POST /api/audit` and `POST /api/chat`; `GET /metrics` reports process-local counts. The API is not suitable for direct internet exposure without application-layer authentication and deployment-specific protections.
+The FastAPI endpoints include `GET /health`, `POST /api/audit` and `POST /api/chat`; `GET /metrics` reports process-local counts. The API is not suitable for direct internet exposure without application-layer authentication and deployment-specific protections. The audit-log endpoint is disabled by default; set a separate `AUDIT_ADMIN_TOKEN` and send it in `X-Audit-Token` to enable authorized log reads. Docker Compose binds port 8000 to localhost.
 
 A separate CLI is installed as `glycan-mass-spec-annotator` (see `glyco_mind/cli.py`). Run `glycan-mass-spec-annotator --help` for its commands. It is **not** the browser mass-composition annotator.
 
