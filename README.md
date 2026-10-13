@@ -35,7 +35,7 @@ There are two distinct **legacy threshold-audit** pipelines. They perform generi
 - `glyco_mind.cli`: a separate threshold-audit CLI and API with a different output schema.
 - `enrichment.py`: generic threshold evaluations grouped under glycomics-related labels. These do not implement the biological analyses implied by their names.
 
-Install Python 3.10+:
+Install Python 3.9+:
 
 ```bash
 python -m pip install -e ".[server,test]"
@@ -66,7 +66,7 @@ node --test web/annotator.test.mjs
 node --check web/app.mjs
 ```
 
-CI covers Python 3.10–3.13 and Node.js 22. No external mass-spectrometry reference data or validated experimental peak library is bundled.
+CI covers Python 3.9–3.13 and Node.js 22. No external mass-spectrometry reference data or validated experimental peak library is bundled.
 
 ## Technology, privacy and compatibility
 
