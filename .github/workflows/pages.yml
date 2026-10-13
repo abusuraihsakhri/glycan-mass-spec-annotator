@@ -31,3 +31,10 @@ jobs:
           path: ./web
       - id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify published HTML and JavaScript
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          curl -fsSL --retry 6 --retry-delay 5 "$PAGE_URL" | grep -q 'id="peaks"'
+          curl -fsSL --retry 6 --retry-delay 5 "${PAGE_URL%/}/app.mjs" | grep -q 'annotatePeaks'
+          curl -fsSL --retry 6 --retry-delay 5 "${PAGE_URL%/}/annotator.mjs" | grep -q 'generateCandidates'
