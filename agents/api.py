@@ -1,10 +1,12 @@
 """
 FastAPI REST API Server for Glycan Mass Spec Annotator.
 """
+import hmac
+import os
 from typing import Dict, Any, List
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
-from .base import AuditLogger, PHIGuard
+from .base import AuditLogger, PHIGuard, SecurityException
 from .models import SystemTaskPayload, ConsensusDossier
 from .supervisor import SystemSupervisor
 
@@ -37,7 +39,10 @@ def metrics():
 
 @app.post("/api/audit")
 def api_audit(payload: SystemTaskPayload):
-    dossier = supervisor.process_task(payload)
+    try:
+        dossier = supervisor.process_task(payload)
+    except SecurityException:
+        raise HTTPException(status_code=400, detail="Task rejected by input privacy policy") from None
     return dossier.to_dict()
 
 
@@ -46,10 +51,14 @@ def api_chat(req: ChatRequest):
     try:
         ans = supervisor.query_supervisory_chat(req.query)
         return {"response": ans}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    except SecurityException:
+        raise HTTPException(status_code=400, detail="Query rejected by input privacy policy") from None
 
 
 @app.get("/api/audit/logs")
-def api_audit_logs():
+def api_audit_logs(x_audit_token: str | None = Header(default=None, alias="X-Audit-Token")):
+    # Operational audit metadata is not a public API. Set a separate access token.
+    secret = os.getenv("AUDIT_ADMIN_TOKEN")
+    if not secret or not x_audit_token or not hmac.compare_digest(secret, x_audit_token):
+        raise HTTPException(status_code=403, detail="Audit log access disabled or unauthorized")
     return {"audit_trail": AuditLogger.get_trail(), "verified": AuditLogger.verify_integrity()}
