@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Glycan Mass Spec Annotator API",
-    "description": "Enterprise Distributed Component Platform (Clinical & Cryptographic AI) adhering to CAP / CLSI / NIST Standards.",
+    "description": "Legacy threshold-audit API. Not a glycan tandem-MS structure annotator. Generated OpenAPI schema is available at /openapi.json when the FastAPI service runs.",
     "version": "3.0.0-ENTERPRISE",
     "contact": {
       "name": "Dr. Abu Suraih Sakhri",
@@ -22,17 +22,17 @@
     },
     "/metrics": {
       "get": {
-        "summary": "Prometheus operational metrics",
+        "summary": "Return process-local JSON counters",
         "responses": {
           "200": {
-            "description": "Prometheus text metrics"
+            "description": "JSON object with processing and audit counts"
           }
         }
       }
     },
     "/api/audit": {
       "post": {
-        "summary": "Dispatch task payload across specialized workers",
+        "summary": "Evaluate legacy threshold-audit payload",
         "requestBody": {
           "content": {
             "application/json": {
@@ -69,14 +69,14 @@
         },
         "responses": {
           "200": {
-            "description": "Consensus dossier with HMAC signature"
+            "description": "Threshold-audit dossier with signed in-memory audit hash"
           }
         }
       }
     },
     "/api/chat": {
       "post": {
-        "summary": "Air-gapped supervisory conversational assistant",
+        "summary": "Return deterministic mock response to a supervisor inquiry",
         "requestBody": {
           "content": {
             "application/json": {
@@ -103,12 +103,26 @@
     },
     "/api/audit/logs": {
       "get": {
-        "summary": "Retrieve and cryptographically verify HMAC audit trail",
+        "summary": "Read audit ledger with administrative token",
         "responses": {
           "200": {
             "description": "Cryptographic audit trail"
+          },
+          "403": {
+            "description": "Audit access disabled or unauthorized"
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "X-Audit-Token",
+            "in": "header",
+            "required": false,
+            "description": "Required if AUDIT_ADMIN_TOKEN is configured; otherwise log access is disabled",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
       }
     }
   }

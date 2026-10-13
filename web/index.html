@@ -1,236 +1,112 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glycan Mass Spec Annotator — Operations Console</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #090d16;
-            --card: #111827;
-            --border: #1f293d;
-            --accent: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.25);
-            --text: #f3f4f6;
-            --text-muted: #9ca3af;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --success: #10b981;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            padding: 2rem;
-            min-height: 100vh;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .header-title h1 { font-size: 1.6rem; font-weight: 700; color: #fff; }
-        .header-title p { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem; }
-        .badge {
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            background: var(--accent-glow);
-            color: var(--accent);
-            border: 1px solid var(--accent);
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 1.5rem;
-        }
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-        .card h2 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .form-group { margin-bottom: 1rem; }
-        label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem; }
-        input, select, textarea {
-            width: 100%;
-            padding: 0.65rem 0.9rem;
-            background: #0d1322;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: #fff;
-            font-family: inherit;
-            font-size: 0.9rem;
-        }
-        input:focus, textarea:focus { outline: none; border-color: var(--accent); }
-        .btn {
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            padding: 0.7rem 1.4rem;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            width: 100%;
-        }
-        .btn:hover { background: #2563eb; }
-        .terminal {
-            background: #060911;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            color: #10b981;
-            height: 380px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-        }
-        .metrics-bar {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        .metric-box {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            text-align: center;
-        }
-        .metric-val { font-size: 1.4rem; font-weight: 700; color: #fff; margin-top: 0.25rem; }
-        .metric-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Local glycan composition candidate matching for mass-spectrometry peak lists.">
+<title>Glycan Mass Spec Annotator</title>
+<style>
+:root {font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:dark;
+ --bg:#0b1020;--panel:#151e31;--border:#30405a;--fg:#edf3ff;--muted:#bbcadc;--accent:#79baff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg)}
+main{max-width:1250px;margin:auto;padding:22px 22px 50px}
+header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px}
+h1{font-size:clamp(1.5rem,3vw,2rem);margin:0 0 8px}h2{font-size:1.12rem;margin:0 0 14px}
+p{line-height:1.5;margin:8px 0} .intro{color:var(--muted);max-width:75ch}
+.kicker{font-size:.76rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);font-weight:700;margin-bottom:7px}
+.layout{display:grid;grid-template-columns:minmax(280px,410px) minmax(380px,1fr);gap:18px}
+section{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;min-width:0}
+label{display:block;color:var(--fg);font-size:.86rem;font-weight:600;margin:0 0 6px}
+small,.hint{color:var(--muted);font-size:.8rem;line-height:1.5}
+input,textarea,select,button{font:inherit}
+input[type="number"],textarea,select,input[type="file"]{color:var(--fg);background:#0e1727;border:1px solid #556782;border-radius:7px;padding:9px;width:100%}
+textarea{min-height:155px;resize:vertical;font: .89rem/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}
+input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid #91cfff;outline-offset:2px}
+.field{margin:0 0 15px}.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+button{border:1px solid var(--accent);border-radius:7px;background:var(--accent);color:#081323;font-weight:700;padding:10px 14px;cursor:pointer}
+button.secondary{color:var(--fg);background:transparent}button:hover{filter:brightness(1.09)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.actions button{flex:1 1 130px}
+.notice{background:#102b39;border-left:3px solid #65b8e8;padding:11px;border-radius:4px;margin:15px 0;color:#d4eaf8;font-size:.84rem;line-height:1.5}
+.error{border:1px solid #d78585;background:#4b1921;color:#ffe1e1;border-radius:6px;padding:12px;margin-top:12px}
+.result-header{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.table-wrapper{overflow:auto;border:1px solid var(--border);border-radius:8px;margin-top:12px;max-height:550px}
+table{border-collapse:collapse;min-width:680px;width:100%;font-size:.84rem}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
+th{position:sticky;top:0;background:#24344d;white-space:nowrap}td{font-variant-numeric:tabular-nums}
+tbody tr:nth-child(2n){background:#1b2639}
+footer{font-size:.82rem;color:var(--muted);margin-top:24px;line-height:1.6}
+a{color:#90c7ff}
+@media(max-width:850px){.layout{grid-template-columns:1fr}main{padding:16px}.fields{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:420px){.controls{grid-template-columns:repeat(2,1fr)}section{padding:14px}header{display:block}}
+</style>
 </head>
 <body>
-
-    <div class="header">
-        <div class="header-title">
-            <h1>Glycan Mass Spec Annotator</h1>
-            <p>Domain: Clinical & Cryptographic AI | Standard: CAP / CLSI / NIST Standards | LabMind-Atlas Architecture</p>
-        </div>
-        <div>
-            <span class="badge">Air-Gapped Active</span>
-            <span class="badge" style="background: rgba(16,185,129,0.2); color: #10b981; border-color: #10b981;">Zero-PHI Guard Active</span>
-        </div>
-    </div>
-
-    <div class="metrics-bar">
-        <div class="metric-box">
-            <div class="metric-label">System Status</div>
-            <div class="metric-val" style="color: var(--success);" id="m-status">OPTIMAL</div>
-        </div>
-        <div class="metric-box">
-            <div class="metric-label">Tasks Processed</div>
-            <div class="metric-val" id="m-tasks">142</div>
-        </div>
-        <div class="metric-box">
-            <div class="metric-label">Audit Blocks Signed</div>
-            <div class="metric-val" id="m-audit">142</div>
-        </div>
-        <div class="metric-box">
-            <div class="metric-label">PHI Interceptions</div>
-            <div class="metric-val" style="color: var(--accent);" id="m-phi">0</div>
-        </div>
-    </div>
-
-    <div class="grid">
-        <div class="card">
-            <h2>⚙️ Dispatch Distributed Component Audit</h2>
-            <div class="form-group">
-                <label>Task / Sample ID</label>
-                <input type="text" id="task_id" value="TASK-2026-LIVE-01">
-            </div>
-            <div class="form-group">
-                <label>Target Identifier</label>
-                <input type="text" id="target_id" value="SPECIMEN-ALPHA-77">
-            </div>
-            <div class="form-group">
-                <label>Primary Measurement / Value</label>
-                <input type="number" id="primary_metric" value="29.4" step="0.1">
-            </div>
-            <div class="form-group">
-                <label>Secondary Metric / Kinetic Index</label>
-                <input type="number" id="secondary_metric" value="14.8" step="0.1">
-            </div>
-            <div class="form-group">
-                <label>Status / Phenotype Descriptor</label>
-                <input type="text" id="status_descriptor" value="DISCORDANT_ANOMALY">
-            </div>
-            <div class="form-group">
-                <label><input type="checkbox" id="is_critical" checked> Trigger Emergency / Critical Flag</label>
-            </div>
-            <button class="btn" onclick="runAudit()">Execute Distributed Component Audit</button>
-        </div>
-
-        <div class="card">
-            <h2>📊 Real-Time Consensus Dossier & Audit Log</h2>
-            <div class="terminal" id="outputConsole">// Glycan Mass Spec Annotator Operations Console Ready
-// Connection established with Air-Gapped Supervisor
-// Cryptographic HMAC-SHA256 audit ledger loaded.
-// Ready for live task payload dispatch...</div>
-        </div>
-    </div>
-
-    <script>
-        async function runAudit() {
-            const consoleEl = document.getElementById('outputConsole');
-            consoleEl.innerText = "// Dispatching task across specialized workers...
-// Invoking InvariantQCWorker, SafetyEscalationWorker, ProtocolWorker...";
-
-            const payload = {
-                task_id: document.getElementById('task_id').value,
-                target_identifier: document.getElementById('target_id').value,
-                primary_metric: parseFloat(document.getElementById('primary_metric').value),
-                secondary_metric: parseFloat(document.getElementById('secondary_metric').value),
-                status_descriptor: document.getElementById('status_descriptor').value,
-                is_critical_flag: document.getElementById('is_critical').checked
-            };
-
-            try {
-                const res = await fetch('/api/audit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                consoleEl.innerText = JSON.stringify(data, null, 2);
-                document.getElementById('m-tasks').innerText = parseInt(document.getElementById('m-tasks').innerText) + 1;
-                document.getElementById('m-audit').innerText = parseInt(document.getElementById('m-audit').innerText) + 1;
-            } catch (err) {
-                consoleEl.innerText = "// Offline / Simulation Output:\n" + JSON.stringify({
-                    dossier_id: "DOSSIER-SIM-" + Math.floor(Math.random()*10000),
-                    system: "glycan-mass-spec-annotator",
-                    domain: "Clinical & Cryptographic AI",
-                    task_id: payload.task_id,
-                    overall_urgency: payload.is_critical_flag ? "CRITICAL_STAT_PANIC" : "ELEVATED_RISK",
-                    integrity_status: "DISCORDANT_ANOMALY",
-                    alerts: [
-                        { worker: "InvariantQCWorker", alert: "Primary metric exceeds upper reference bound" },
-                        { worker: "SafetyEscalationWorker", alert: "Critical emergency interlock flag active" }
-                    ],
-                    audit_hash: "HMAC_SHA256_e83f9a72b941d6c381f9"
-                }, null, 2);
-            }
-        }
-    </script>
+<main>
+<header>
+<div>
+<div class="kicker">Local spectrum analysis</div>
+<h1>Glycan Mass Spec Annotator</h1>
+<p class="intro">Match observed <em>m/z</em> peaks against theoretical monoisotopic masses of candidate glycan compositions. No server, account, or installation required.</p>
+</div>
+</header>
+<div class="layout">
+<section aria-labelledby="settings-title">
+<h2 id="settings-title">1. Peaks &amp; search settings</h2>
+<div class="field">
+<label for="peaks">Observed m/z values</label>
+<textarea id="peaks" spellcheck="false" placeholder="mz,intensity&#10;1056.4,100000&#10;500.0,250"></textarea>
+<small>One m/z per line, or CSV/TSV with optional intensity. Up to 5,000 peaks (1 MB).</small>
+</div>
+<div class="field">
+<label for="file">Or load a peak-list file</label>
+<input id="file" type="file" accept=".csv,.tsv,.txt,text/csv,text/plain">
+</div>
+<h2>2. Maximum residue counts</h2>
+<div class="fields">
+<div class="field"><label for="hex">Hex</label><input id="hex" type="number" min="0" max="40" step="1" value="6"></div>
+<div class="field"><label for="hexnac">HexNAc</label><input id="hexnac" type="number" min="0" max="40" step="1" value="5"></div>
+<div class="field"><label for="fuc">Fuc</label><input id="fuc" type="number" min="0" max="40" step="1" value="2"></div>
+<div class="field"><label for="neuac">NeuAc</label><input id="neuac" type="number" min="0" max="40" step="1" value="2"></div>
+<div class="field"><label for="neugc">NeuGc</label><input id="neugc" type="number" min="0" max="40" step="1" value="0"></div>
+</div>
+<div class="controls">
+<div class="field"><label for="adduct">Ion species</label><select id="adduct"><option value="H+">[M+zH]z+</option><option value="H-">[M−zH]z−</option><option value="Na+">[M+Na]+</option></select></div>
+<div class="field"><label for="charge">Charge |z|</label><select id="charge"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+<div class="field"><label for="ppm">Tolerance (ppm)</label><input id="ppm" type="number" min="0.001" max="1000" step="any" value="10"></div>
+</div>
+<div class="notice">Assumes underivatized, free/released glycan compositions including terminal H₂O. This is a composition-mass screen, <strong>not</strong> a structure assignment, fragmentation predictor, or identification confidence score.</div>
+<div class="actions">
+<button id="run" type="button">Annotate peaks</button>
+<button id="example" class="secondary" type="button">Load example</button>
+</div>
+<p id="error" class="error" role="alert" hidden></p>
+</section>
+<section aria-labelledby="results-title">
+<div class="result-header">
+<h2 id="results-title">3. Candidate annotations</h2>
+<button id="download" type="button" class="secondary" disabled>Export CSV</button>
+</div>
+<p class="hint">Matches are ranked by absolute ppm error. Multiple compositions can have indistinguishable m/z; every result requires independent experimental validation.</p>
+<div id="results" hidden>
+<p id="summary" role="status" aria-live="polite"></p>
+<div class="table-wrapper"><table>
+<thead><tr><th scope="col">Peak</th><th scope="col">Observed m/z</th><th scope="col">Intensity</th><th scope="col">Composition</th><th scope="col">Theoretical m/z</th><th scope="col">Error (ppm)</th></tr></thead>
+<tbody id="result-rows"></tbody>
+</table></div>
+<p class="hint" id="table-note"></p>
+</div>
+<p id="initial-hint" class="hint">Enter peaks and select <strong>Annotate peaks</strong>, or load the example to inspect the output.</p>
+</section>
+</div>
+<footer>
+<p>All data stays in this browser tab; no files or peak values are uploaded. Inputs and results are not stored. This static application runs without Python; the repository's separate CLI and FastAPI workflows require a Python runtime.</p>
+<p>Mass convention: Hex 162.0528234315, HexNAc 203.0793725330, Fuc 146.0579088090, NeuAc 291.0954165270, NeuGc 307.0903311490 Da (residues); +H₂O 18.0105646840 Da. Ion m/z uses proton or sodium-cation adduct masses. Structural isomers, derivatization, isotope envelopes and tandem-MS fragment assignment are not modeled.</p>
+</footer>
+</main>
+<script type="module" src="./app.mjs"></script>
 </body>
 </html>

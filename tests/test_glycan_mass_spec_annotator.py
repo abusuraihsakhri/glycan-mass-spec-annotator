@@ -108,3 +108,19 @@ def test_audit_key_required_when_env_not_set():
         if original:
             os.environ["AUDIT_SECRET_KEY"] = original
         AuditLogger.reset()
+
+
+def test_audit_hmac_tampering_is_detected():
+    from agents.base import AuditTrail
+    audit = AuditTrail(secret_key="local-test-key")
+    audit.log("worker", "supervisor", "TASK", {"measurement": 4})
+    audit.log("worker", "supervisor", "NEXT", {"measurement": 7})
+    assert audit.verify_integrity()
+    snapshot = audit.get_trail()
+    snapshot[0]["event_type"] = "tampered copy"
+    assert audit.verify_integrity()
+    audit.logs[0]["event_type"] = "tampered"
+    assert not audit.verify_integrity()
+    audit.logs[0]["event_type"] = "TASK"
+    audit.logs[-1]["current_hash"] = "0" * 64
+    assert not audit.verify_integrity()
