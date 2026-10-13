@@ -112,15 +112,17 @@ export function annotatePeaks(peaks, candidates, tolerancePpm = 10, maximumPerPe
     throw new RangeError("Invalid maximum matches");
   }
   return peaks.map((peak, index) => {
-    const delta = peak.mz * tolerancePpm / 1e6;
+    const fraction = tolerancePpm / 1e6;
+    const minTheoretical = peak.mz / (1 + fraction);
+    const maxTheoretical = peak.mz / (1 - fraction);
     let lo = 0, hi = candidates.length;
     while (lo < hi) {
       const mid = (lo + hi) >>> 1;
-      if (candidates[mid].mz < peak.mz - delta) lo = mid + 1;
+      if (candidates[mid].mz < minTheoretical) lo = mid + 1;
       else hi = mid;
     }
     const matches = [];
-    while (lo < candidates.length && candidates[lo].mz <= peak.mz + delta) {
+    while (lo < candidates.length && candidates[lo].mz <= maxTheoretical) {
       const candidate = candidates[lo++];
       matches.push({...candidate, ppm: (peak.mz - candidate.mz) / candidate.mz * 1e6});
     }
