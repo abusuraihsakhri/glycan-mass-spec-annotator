@@ -3,7 +3,7 @@ FastAPI REST API Server for Glycan Mass Spec Annotator.
 """
 import hmac
 import os
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
 from .base import AuditLogger, PHIGuard, SecurityException
@@ -56,7 +56,7 @@ def api_chat(req: ChatRequest):
 
 
 @app.get("/api/audit/logs")
-def api_audit_logs(x_audit_token: str | None = Header(default=None, alias="X-Audit-Token")):
+def api_audit_logs(x_audit_token: Optional[str] = Header(default=None, alias="X-Audit-Token")):
     # Operational audit metadata is not a public API. Set a separate access token.
     secret = os.getenv("AUDIT_ADMIN_TOKEN")
     if not secret or not x_audit_token or not hmac.compare_digest(secret, x_audit_token):
