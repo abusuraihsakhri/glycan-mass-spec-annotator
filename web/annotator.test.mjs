@@ -9,6 +9,7 @@ test("released composition neutral mass and singly protonated m/z", () => {
   const mass = compositionMass({Hex: 3, HexNAc: 2, Fuc: 1});
   const expected = WATER + 3 * RESIDUES.Hex + 2 * RESIDUES.HexNAc + RESIDUES.Fuc;
   assert.ok(Math.abs(mass - expected) < 1e-9);
+  assert.ok(Math.abs(compositionMass({Hex:3, HexNAc:2}) - 910.3277800445) < 1e-8);
   assert.ok(Math.abs(mzFromMass(mass, "H+", 1) - (expected + PROTON)) < 1e-9);
   assert.ok(Math.abs(mzFromMass(mass, "H+", 2) - (expected + 2 * PROTON) / 2) < 1e-9);
 });
